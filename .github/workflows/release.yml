@@ -52,6 +52,21 @@ jobs:
           # 2. 产出供 GitHub Release 发布的内嵌 web 归档包与 Windows 编译物
           ./build/build-go.sh release-artifacts .
 
+      
+      - name: Normalize ARMv7 Archive
+        shell: bash
+        run: |
+          if [ -f baihu-linux-armv7.tar.gz ]; then
+            echo "ARMv7 archive already exists."
+          elif [ -f baihu-linux-arm.tar.gz ]; then
+            cp baihu-linux-arm.tar.gz baihu-linux-armv7.tar.gz
+            echo "Renamed baihu-linux-arm.tar.gz to baihu-linux-armv7.tar.gz"
+          else
+            echo "ERROR: ARMv7 archive was not generated."
+            find . -maxdepth 2 -type f -name '*arm*.tar.gz' -print
+            exit 1
+          fi
+
       - name: Upload Windows Binaries
         uses: actions/upload-artifact@v4
         with:
